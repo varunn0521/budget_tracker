@@ -5,6 +5,6 @@ from tracker import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('tracker.urls')),  # Routes requests for 'accounts' to the tracker app
-    path('', views.home, name='home'),  # Map root URL to the home view
+    path('accounts/', include('tracker.urls')), 
+    path('', views.home, name='home'),  
 ]
