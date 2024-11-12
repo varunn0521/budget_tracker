@@ -1,0 +1,51 @@
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+<h1>Welcome, {{ user.username }}!</h1>
+
+<div class="my-4">
+    <h3>Your Financial Overview</h3>
+    <p>Here you can manage your income and expenses.</p>
+
+    <div>
+        <a href="{% url 'add_income' %}" class="btn btn-primary">Add Income</a>
+        <a href="{% url 'view_incomes' %}" class="btn btn-secondary">View Income</a>
+        <a href="{% url 'add_expense' %}" class="btn btn-danger">Add Expense</a>
+        <a href="{% url 'view_expenses' %}" class="btn btn-warning">View Expenses</a>
+    </div>
+</div>
+
+<div class="my-4">
+    <h3>Your Latest Transactions</h3>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Recent Income</h4>
+            <ul class="list-group">
+                {% for income in incomes %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ income.date }}</span>
+                        <span>${{ income.amount }} - {{ income.category }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No income recorded yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h4>Recent Expenses</h4>
+            <ul class="list-group">
+                {% for expense in expenses %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ expense.date }}</span>
+                        <span>${{ expense.amount }} - {{ expense.category }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No expenses recorded yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
