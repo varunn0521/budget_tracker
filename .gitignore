@@ -1,0 +1,7 @@
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+# Ignore migration files in tracker app
+tracker/migrations/*.pyc
+tracker/migrations/__pycache__/
