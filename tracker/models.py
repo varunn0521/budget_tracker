@@ -6,6 +6,8 @@ class Category(models.Model):
     type = models.CharField(max_length=10, choices=[('income', 'Income'), ('expense', 'Expense')], default='expense')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.name} ({self.type})"
 
 class Income(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -37,4 +39,4 @@ class EMI(models.Model):
     status = models.BooleanField(default=False)  # False for unpaid, True for paid
 
     def __str__(self):
-        return f"{self.amount} - Due on {self.due_date}"
+        return f"{self.amount} - Due on {self.due_date} - {'Paid' if self.status else 'Unpaid'}"

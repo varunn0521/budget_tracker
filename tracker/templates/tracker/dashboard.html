@@ -1,51 +1,111 @@
-{% extends 'tracker/base.html' %}
+<!-- tracker/dashboard.html -->
+{% extends "tracker/base.html" %}
 
 {% block content %}
-<h1>Welcome, {{ user.username }}!</h1>
+<div class="container mt-4">
+    <h2>Dashboard</h2>
 
-<div class="my-4">
-    <h3>Your Financial Overview</h3>
-    <p>Here you can manage your income and expenses.</p>
+    <!-- Financial Summary Section -->
+    <div class="summary my-4">
+        <h3>Your Financial Overview</h3>
+        <p><strong>Total Income:</strong> ${{ total_income }}</p>
+        <p><strong>Total Expenses:</strong> ${{ total_expenses }}</p>
+        <p><strong>Balance:</strong> ${{ balance }}</p>
+    </div>
 
-    <div>
+    <!-- Links to add income, expense, and view records -->
+    <div class="my-4">
         <a href="{% url 'add_income' %}" class="btn btn-primary">Add Income</a>
         <a href="{% url 'view_incomes' %}" class="btn btn-secondary">View Income</a>
         <a href="{% url 'add_expense' %}" class="btn btn-danger">Add Expense</a>
         <a href="{% url 'view_expenses' %}" class="btn btn-warning">View Expenses</a>
     </div>
-</div>
 
-<div class="my-4">
-    <h3>Your Latest Transactions</h3>
-
-    <div class="row">
-        <div class="col-md-6">
-            <h4>Recent Income</h4>
-            <ul class="list-group">
+    <!-- Incomes Table -->
+    <div class="my-4">
+        <h3>Recent Income</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for income in incomes %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>{{ income.date }}</span>
-                        <span>${{ income.amount }} - {{ income.category }}</span>
-                    </li>
+                    <tr>
+                        <td>{{ income.date }}</td>
+                        <td>${{ income.amount }}</td>
+                        <td>{{ income.category }}</td>
+                        <td>{{ income.description }}</td>
+                    </tr>
                 {% empty %}
-                    <li class="list-group-item">No income recorded yet.</li>
+                    <tr>
+                        <td colspan="4">No income recorded yet.</td>
+                    </tr>
                 {% endfor %}
-            </ul>
-        </div>
-        <div class="col-md-6">
-            <h4>Recent Expenses</h4>
-            <ul class="list-group">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Expenses Table -->
+    <div class="my-4">
+        <h3>Recent Expenses</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for expense in expenses %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>{{ expense.date }}</span>
-                        <span>${{ expense.amount }} - {{ expense.category }}</span>
-                    </li>
+                    <tr>
+                        <td>{{ expense.date }}</td>
+                        <td>${{ expense.amount }}</td>
+                        <td>{{ expense.category }}</td>
+                        <td>{{ expense.description }}</td>
+                    </tr>
                 {% empty %}
-                    <li class="list-group-item">No expenses recorded yet.</li>
+                    <tr>
+                        <td colspan="4">No expenses recorded yet.</td>
+                    </tr>
                 {% endfor %}
-            </ul>
-        </div>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- EMIs Table -->
+    <div class="my-4">
+        <h3>Recent EMIs</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Due Date</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emi in emis %}
+                    <tr>
+                        <td>{{ emi.due_date }}</td>
+                        <td>${{ emi.amount }}</td>
+                        <td>{{ emi.category }}</td>
+                        <td>{{ emi.description }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">No EMI recorded yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
-
 {% endblock %}

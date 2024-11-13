@@ -1,3 +1,5 @@
+/* tracker/static/css/style.css */
+
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #f4f8f5;
@@ -5,7 +7,6 @@ body {
     padding: 0;
     overflow-x: hidden;
 }
-
 
 .navbar {
     background-color: black;
@@ -56,7 +57,6 @@ body {
     color: #F39C12 !important;
 }
 
-
 .hero {
     background-color: #27AE60;
     color: #ffffff;
@@ -102,7 +102,6 @@ body {
     color: white;
     transform: translateY(-3px);
 }
-
 
 .form-control {
     border-radius: 8px;
@@ -233,5 +232,104 @@ button[type="submit"]:hover {
 
     .container {
         margin-top: 50px;
+    }
+}
+
+/* Add styling for income/expense/EMI forms and dashboard here */
+
+/* Financial Summary Section */
+.summary {
+    display: flex;
+    justify-content: space-around;
+    background-color: #27AE60;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Table Styles for Incomes, Expenses, and EMIs */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #2C6B39;
+    color: white;
+    font-weight: bold;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Form Styling */
+form {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+form .form-group {
+    margin-bottom: 15px;
+}
+
+form .form-control {
+    font-size: 1.1rem;
+    padding: 12px;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #27AE60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #2C6B39;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .summary {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    table th, table td {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
     }
 }
