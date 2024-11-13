@@ -7,3 +7,7 @@ tracker/migrations/*.pyc
 tracker/migrations/__pycache__/
 
 db.sqlite3
+
+# Ignore Python bytecode files
+*.pyc
+__pycache__/
