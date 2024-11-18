@@ -1,0 +1,33 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<button class="btn btn-secondary mb-3" onclick="history.back()">Back</button>
+
+<div class="container mt-4">
+    <h2>Your Incomes</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="color: #3498db;">Date</th>
+                <th style="color: #e74c3c;">Amount</th>
+                <th style="color: #2ecc71;">Category</th>
+                <th style="color: #9b59b6;">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for income in incomes %}
+                <tr>
+                    <td>{{ income.date }}</td>
+                    <td>{{ income.amount }}</td>
+                    <td>{{ income.category.name }}</td>
+                    <td>{{ income.description }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No incomes recorded.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

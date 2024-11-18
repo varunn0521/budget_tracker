@@ -1,4 +1,3 @@
-/* tracker/static/css/style.css */
 
 body {
     font-family: 'Roboto', sans-serif;
@@ -235,9 +234,6 @@ button[type="submit"]:hover {
     }
 }
 
-/* Add styling for income/expense/EMI forms and dashboard here */
-
-/* Financial Summary Section */
 .summary {
     display: flex;
     justify-content: space-around;
@@ -332,4 +328,64 @@ button[type="submit"]:hover {
     .hero p {
         font-size: 1.1rem;
     }
+}
+
+input.form-control {
+    max-width: 400px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+/* Initially hide the password rules */
+.password-rules {
+    display: inline-block;
+    position: relative;
+    opacity: 0;
+    pointer-events: none; /* Prevent interaction when hidden */
+    transition: opacity 0.3s ease; /* Smooth fade-in/out */
+}
+
+/* When the user hovers over the question mark icon, show the rules */
+.password-rules i:hover + ul {
+    opacity: 1;
+    pointer-events: auto; /* Allow interaction when visible */
+}
+
+/* Password rule list styles */
+.password-rules ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 5px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Rule item styles */
+.password-rules li {
+    font-size: 14px;
+}
+
+/* Valid rule styling */
+.password-rules .valid-rule {
+    color: green;
+}
+
+/* Invalid rule styling */
+.password-rules .invalid-rule {
+    color: red;
+}
+
+/* Optional: Hover effect on the icon */
+.password-rules i {
+    cursor: pointer;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+.password-rules i:hover {
+    color: #0056b3;
 }

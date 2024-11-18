@@ -5,6 +5,6 @@ from tracker import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('tracker.urls')), 
-    path('', views.home, name='home'),  
+    path('accounts/', include('tracker.urls')),  
+    path('', views.home, name='home'),
 ]

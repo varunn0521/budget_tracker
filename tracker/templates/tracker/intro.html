@@ -1,0 +1,162 @@
+{% extends 'tracker/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Bootstrap Carousel -->
+<div class="container-fluid intro-container">
+    <!-- Slideshow/Carousel -->
+    <div id="introCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <!-- First Slide -->
+            <div class="carousel-item active">
+                <img src="{% static 'images/intro-slide1.jpg' %}" class="d-block w-100 carousel-image" alt="Slide 1">
+                <div class="carousel-caption d-none d-md-block">
+                    <h3>Your Financial Journey Starts Here</h3>
+                    <p>Track your income, expenses, and EMIs with ease and clarity.</p>
+                </div>
+            </div>
+            <!-- Second Slide -->
+            <div class="carousel-item">
+                <img src="{% static 'images/intro-slide2.jpg' %}" class="d-block w-100 carousel-image" alt="Slide 2">
+                <div class="carousel-caption d-none d-md-block">
+                    <h3>Simple & Intuitive Dashboard</h3>
+                    <p>Stay on top of your financial goals with our simple dashboard.</p>
+                </div>
+            </div>
+            <!-- Third Slide -->
+            <div class="carousel-item">
+                <img src="{% static 'images/intro-slide3.jpg' %}" class="d-block w-100 carousel-image" alt="Slide 3">
+                <div class="carousel-caption d-none d-md-block">
+                    <h3>Empower Your Financial Decisions</h3>
+                    <p>Make better decisions by understanding your financial health.</p>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#introCarousel" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#introCarousel" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </a>
+    </div>
+
+    <!-- Welcome Text -->
+    <div class="text-center mt-5">
+        <h2 class="welcome-heading animate__animated animate__fadeIn">Welcome to the App!</h2>
+        <p class="intro-description animate__animated animate__fadeIn animate__delay-1s">
+            Our app helps you manage your finances efficiently by tracking your income, expenses, and EMIs. Start now and take control of your financial future!
+        </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="text-center mt-4">
+        <a href="{% url 'login' %}" class="btn btn-success btn-lg animate__animated animate__fadeIn animate__delay-2s">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+        <a href="{% url 'register' %}" class="btn btn-outline-success btn-lg animate__animated animate__fadeIn animate__delay-2s">
+            <i class="fas fa-user-plus"></i> Register
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Bootstrap 5 JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@animista/animate.css@5.1.0"></script>
+<script>
+    $(document).ready(function () {
+        // Initialize the carousel
+        $('#introCarousel').carousel({
+            interval: 3000 // 3 seconds for each slide
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_style %}
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+/* Styling for the introductory page */
+.intro-container {
+    padding: 0;
+    height: 100vh;
+    background-color: #f4fdf7;  /* Light green background */
+}
+
+.carousel-inner {
+    height: 60vh; /* Set the height of the carousel inner container */
+}
+
+.carousel-item {
+    height: 100%; /* Ensure the carousel item takes full height of the container */
+}
+
+.carousel-item img {
+    height: 100%; /* Make the image take up full height */
+    width: 100%; /* Make the image stretch to the full width */
+    object-fit: cover; /* Keep the aspect ratio of the image */
+}
+
+/* Styling for the carousel captions */
+.carousel-caption h3 {
+    font-size: 2.5rem;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.carousel-caption p {
+    font-size: 1.2rem;
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.welcome-heading {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #28a745;  /* Green color */
+}
+
+.intro-description {
+    font-size: 1.2rem;
+    color: #6c757d;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.btn-success, .btn-outline-success {
+    font-size: 1.2rem;
+    padding: 12px 30px;
+    margin: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover, .btn-outline-success:hover {
+    background-color: #218838;
+    color: white;
+}
+
+/* Animation for buttons and text */
+.animate__animated {
+    animation-duration: 1s;
+}
+
+.animate__fadeIn {
+    animation-name: fadeIn;
+}
+
+.animate__delay-1s {
+    animation-delay: 1s;
+}
+
+.animate__delay-2s {
+    animation-delay: 2s;
+}
+</style>
+{% endblock %}

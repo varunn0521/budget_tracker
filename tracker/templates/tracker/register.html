@@ -1,34 +1,163 @@
 {% extends 'tracker/base.html' %}
-
 {% load custom_filters %}
+{% load static %}
 
 {% block content %}
+
+{% if messages %}
+    <div class="alert alert-success" id="success-message" style="display:none;">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="container mt-4">
     <h2>Register</h2>
     <form method="POST" action="">
         {% csrf_token %}
+        
         <div class="form-group">
-            <label for="{{ form.username.id_for_label }}">
-                <i class="fas fa-user"></i> Username
+            <label for="{{ form.email.id_for_label }}">
+                <i class="fas fa-envelope"></i> Email
             </label>
-            {{ form.username|add_class:"form-control" }}
+            {{ form.email|add_class:"form-control" }}
+            {% if form.email.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.email.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
+
         <div class="form-group">
             <label for="{{ form.password1.id_for_label }}">
                 <i class="fas fa-lock"></i> Password
             </label>
             {{ form.password1|add_class:"form-control" }}
+            {% if form.password1.errors %}
+            <div id="password-feedback" class="invalid-feedback" style="display:none;">
+            </div>
+            {% endif %}
+            
+            <div class="password-rules" id="password-rules" style="display:none;">
+                <i class="fas fa-question-circle"></i> 
+                <ul>
+                    <li id="min-length-rule" class="invalid-rule">At least 8 characters</li>
+                    <li id="uppercase-rule" class="invalid-rule">At least one uppercase letter</li>
+                    <li id="special-char-rule" class="invalid-rule">At least one special character</li>
+                </ul>
+            </div>
         </div>
+
         <div class="form-group">
             <label for="{{ form.password2.id_for_label }}">
                 <i class="fas fa-lock"></i> Confirm Password
             </label>
             {{ form.password2|add_class:"form-control" }}
+            {% if form.password2.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.password2.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div id="password-match-feedback" class="invalid-feedback" style="display:none;">
+                Passwords do not match
+            </div>
         </div>
+
         <button type="submit" class="btn btn-primary">
             <i class="fas fa-user-plus"></i> Register
         </button>
     </form>
+    
     <p class="mt-3">Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/registration.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('#id_password1').focus(function () {
+            $('#password-rules').fadeIn();
+        });
+
+        $('#id_password1').blur(function () {
+            if ($('#id_password1').val() == '') {
+                $('#password-rules').fadeOut();
+            }
+        });
+
+        $('#id_password1').keyup(function () {
+            var password = $('#id_password1').val();
+            var minLength = password.length >= 8;
+            var hasUppercase = /[A-Z]/.test(password);
+            var hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            if (minLength) {
+                $('#min-length-rule').removeClass('invalid-rule').addClass('valid-rule');
+            } else {
+                $('#min-length-rule').removeClass('valid-rule').addClass('invalid-rule');
+            }
+
+            if (hasUppercase) {
+                $('#uppercase-rule').removeClass('invalid-rule').addClass('valid-rule');
+            } else {
+                $('#uppercase-rule').removeClass('valid-rule').addClass('invalid-rule');
+            }
+
+            if (hasSpecialChar) {
+                $('#special-char-rule').removeClass('invalid-rule').addClass('valid-rule');
+            } else {
+                $('#special-char-rule').removeClass('valid-rule').addClass('invalid-rule');
+            }
+        });
+
+        $('#id_password2').keyup(function () {
+            if ($('#id_password1').val() !== $('#id_password2').val()) {
+                $('#password-match-feedback').fadeIn();
+            } else {
+                $('#password-match-feedback').fadeOut();
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_style %}
+<style>
+
+.password-container {
+    margin-bottom: 20px;
+}
+
+.password-container input {
+    margin-bottom: 10px;
+}
+
+.password-rules {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: none;
+}
+
+.valid-rule {
+    color: green;
+}
+
+.invalid-rule {
+    color: red;
+}
+
+#password-feedback, #password-match-feedback {
+    display: block;
+    color: red;
+}
+</style>
 {% endblock %}

@@ -1,13 +1,47 @@
-<!-- tracker/add_emi.html -->
 {% extends "tracker/base.html" %}
 
 {% block content %}
+<button class="btn btn-secondary mb-3" onclick="history.back()">Back</button>
+
 <div class="container mt-4">
     <h2>Add EMI</h2>
-    <form method="POST">
+    <form method="POST" class="mt-4">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-group">
+            <label for="id_amount">Amount</label>
+            {{ form.amount }}
+        </div>
+        <div class="form-group">
+            <label for="id_category">Category</label>
+            {{ form.category }}
+        </div>
+        <div class="form-group">
+            <label for="id_due_date">Due Date</label>
+            <input type="date" name="due_date" id="id_due_date" class="form-control" min="2020-01-01" max="2030-12-31" value="{{ form.due_date.value|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label for="id_frequency">Frequency</label>
+            {{ form.frequency }}
+        </div>
+        <div class="form-group">
+            <label for="id_description">Description</label>
+            {{ form.description }}
+        </div>
         <button type="submit" class="btn btn-primary">Add EMI</button>
     </form>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("#id_due_date", {
+            minDate: "2020-01-01",
+            maxDate: "2030-12-31",
+            dateFormat: "Y-m-d"
+        });
+    });
+</script>
 {% endblock %}

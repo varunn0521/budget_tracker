@@ -1,107 +1,101 @@
 from django import forms
-from django.contrib.auth.models import User
-from .models import Income, Expense, EMI, Category
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import CustomUser, Income, Expense, EMI, Category
+import re
 
-# RegisterForm for user registration
-class RegisterForm(forms.ModelForm):
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Confirm Password", widget=forms.PasswordInput)
+# Custom User Creation Form
+class CustomUserCreationForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField()
 
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        model = CustomUser
+        fields = ['email', 'password']  
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords do not match")
-        return password2
+    # Validate password based on custom conditions
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        
+        # Check for uppercase letter
+        if not re.search(r'[A-Z]', password):
+            raise forms.ValidationError('Password must contain at least one uppercase letter.')
+        
+        # Check for length of password
+        if len(password) < 8:
+            raise forms.ValidationError('Password must be at least 8 characters long.')
+        
+        # Check for special characters
+        if not re.search(r'[\W_]', password):
+            raise forms.ValidationError('Password must contain at least one symbol (e.g., !, @, #, $).')
+        
+        return password
+
+# Register Form (using the CustomUser model)
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'password1', 'password2']  
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password1'])
+        user.email = self.cleaned_data.get("email")
+        user.username = user.email  
+
+        user.backend = 'tracker.backend.EmailBackend'  
+
         if commit:
             user.save()
+            Category.create_default_categories(user) 
         return user
 
-# IncomeForm for adding income
+# Login Form (using the email as username)
+class LoginForm(AuthenticationForm):
+    username = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'autofocus': True}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].label = "Email"
+
+
+# Income Form
 class IncomeForm(forms.ModelForm):
     class Meta:
         model = Income
         fields = ['amount', 'date', 'category', 'description']
-        widgets = {
-            'date': forms.DateInput(attrs={'type': 'date'}),  # Calendar picker for date input
-        }
+        widgets = {'date': forms.DateInput(attrs={'type': 'date'})}
 
-    # Dynamically filter categories based on logged-in user
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
-            # Filter income categories for the logged-in user
             self.fields['category'].queryset = Category.objects.filter(type='income', user=user)
-        self.fields['category'].empty_label = "Select Category"
-        self.fields['amount'].required = True
-        self.fields['date'].required = True
-        self.fields['category'].required = True
-        self.fields['description'].required = True
 
-# ExpenseForm for adding expense
+
+# Expense Form
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
         fields = ['amount', 'date', 'category', 'description']
+        widgets = {'date': forms.DateInput(attrs={'type': 'date'})}
 
-    # Dynamically filter categories based on logged-in user
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
-            # Filter expense categories for the logged-in user
             self.fields['category'].queryset = Category.objects.filter(type='expense', user=user)
-        self.fields['category'].empty_label = "Select Category"
-        self.fields['amount'].required = True
-        self.fields['date'].required = True
-        self.fields['category'].required = True
-        self.fields['description'].required = True
 
-# EMIForm for adding EMI
+
+# EMI Form
 class EMIForm(forms.ModelForm):
     class Meta:
         model = EMI
         fields = ['amount', 'due_date', 'frequency', 'category', 'description']
-        widgets = {
-            'due_date': forms.DateInput(attrs={'type': 'date'}),  # HTML5 date picker
-        }
+        widgets = {'due_date': forms.DateInput(attrs={'type': 'date'})}
 
-    # Dynamically filter categories based on logged-in user
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
-            # Filter expense categories for the logged-in user (assuming EMI uses expense categories)
-            self.fields['category'].queryset = Category.objects.filter(type='expense', user=user)
-        self.fields['category'].empty_label = "Select Category"
-        self.fields['amount'].required = True
-        self.fields['due_date'].required = True
-        self.fields['frequency'].required = True
-        self.fields['category'].required = True
-        self.fields['description'].required = True
-
-# CategoryForm for adding categories
-class CategoryForm(forms.ModelForm):
-    class Meta:
-        model = Category
-        fields = ['name', 'type']
-
-    # Dynamically set the category type options based on the logged-in user
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-        if user:
-            # Only show categories that belong to the logged-in user
-            self.fields['type'].queryset = Category.objects.filter(user=user)
-        self.fields['type'].empty_label = "Select Category Type"
-        self.fields['name'].required = True
-        self.fields['type'].required = True
+            self.fields['category'].queryset = Category.objects.filter(type='emi', user=user)

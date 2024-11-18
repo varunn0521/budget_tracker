@@ -1,11 +1,10 @@
-<!-- tracker/dashboard.html -->
 {% extends "tracker/base.html" %}
 
 {% block content %}
+
 <div class="container mt-4">
     <h2>Dashboard</h2>
 
-    <!-- Financial Summary Section -->
     <div class="summary my-4">
         <h3>Your Financial Overview</h3>
         <p><strong>Total Income:</strong> ${{ total_income }}</p>
@@ -13,15 +12,14 @@
         <p><strong>Balance:</strong> ${{ balance }}</p>
     </div>
 
-    <!-- Links to add income, expense, and view records -->
     <div class="my-4">
         <a href="{% url 'add_income' %}" class="btn btn-primary">Add Income</a>
         <a href="{% url 'view_incomes' %}" class="btn btn-secondary">View Income</a>
         <a href="{% url 'add_expense' %}" class="btn btn-danger">Add Expense</a>
         <a href="{% url 'view_expenses' %}" class="btn btn-warning">View Expenses</a>
+        <a href="{% url 'add_emi' %}" class="btn btn-info">Add EMI</a> 
     </div>
 
-    <!-- Incomes Table -->
     <div class="my-4">
         <h3>Recent Income</h3>
         <table class="table table-bordered">
@@ -50,7 +48,6 @@
         </table>
     </div>
 
-    <!-- Expenses Table -->
     <div class="my-4">
         <h3>Recent Expenses</h3>
         <table class="table table-bordered">
@@ -79,7 +76,6 @@
         </table>
     </div>
 
-    <!-- EMIs Table -->
     <div class="my-4">
         <h3>Recent EMIs</h3>
         <table class="table table-bordered">
@@ -108,4 +104,5 @@
         </table>
     </div>
 </div>
+
 {% endblock %}
