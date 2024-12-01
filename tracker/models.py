@@ -1,11 +1,10 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.conf import settings
+from datetime import date
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
-        """
-        Creates and returns a regular user with an email and password.
-        """
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
@@ -15,9 +14,6 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
-        """
-        Creates and returns a superuser with an email and password.
-        """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
@@ -50,9 +46,12 @@ class Category(models.Model):
         ('expense', 'Expense'),
         ('emi', 'EMI'),  
     ]
-    name = models.CharField(max_length=100)
-    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='expense')
+    name = models.CharField(max_length=255)
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='categories')
+
+    class Meta:
+        unique_together = ('user', 'name', 'type') 
 
     def __str__(self):
         return f"{self.name} ({self.type})"
@@ -72,9 +71,8 @@ class Category(models.Model):
         for category_name in default_emi_categories:
             cls.objects.create(name=category_name, type='emi', user=user)
 
-
 class Income(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, limit_choices_to={'type': 'income'})
@@ -83,9 +81,8 @@ class Income(models.Model):
     def __str__(self):
         return f"{self.amount} - {self.category}"
 
-
 class Expense(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, limit_choices_to={'type': 'expense'})
@@ -94,16 +91,44 @@ class Expense(models.Model):
     def __str__(self):
         return f"{self.amount} - {self.category}"
 
+from django.db import models
+from datetime import date
+from django.conf import settings
 
 class EMI(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    due_date = models.DateField()
-    frequency = models.CharField(max_length=10, choices=[('monthly', 'Monthly'), ('yearly', 'Yearly')])
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, limit_choices_to={'type': 'emi'})
-    description = models.TextField(blank=True)
-    status = models.BooleanField(default=False)
+    category = models.ForeignKey(
+        'Category',
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'type': 'emi'}
+    )
+    description = models.TextField(blank=True, null=True)
+    due_date = models.DateField(default=date.today)
+    frequency = models.CharField(
+        max_length=50,
+        choices=[
+            ('daily', 'Daily'),
+            ('weekly', 'Weekly'),
+            ('bi-weekly', 'Bi-Weekly'),
+            ('monthly', 'Monthly'),
+            ('quarterly', 'Quarterly'),
+            ('yearly', 'Yearly'),
+        ]
+    )
+    remaining_installments = models.IntegerField(default=0)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('active', 'Active'),
+            ('completed', 'Completed'),
+            ('defaulted', 'Defaulted'),
+        ],
+        default='active'
+    )
+    start_date = models.DateField(default=date.today)  # Add start date
+    next_payment_date = models.DateField(default=date.today)  # Add next payment date
 
     def __str__(self):
-        return f"{self.amount} - Due on {self.due_date} - {'Paid' if self.status else 'Unpaid'}"
-
+        return f"{self.description} - {self.amount} ({self.frequency})"

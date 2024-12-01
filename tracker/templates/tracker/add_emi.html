@@ -1,47 +1,141 @@
-{% extends "tracker/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add EMI</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/add_emi.css' %}?v=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body id="add-emi-page">
 
-{% block content %}
-<button class="btn btn-secondary mb-3" onclick="history.back()">Back</button>
+  <!-- Navbar -->
+  <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'home' %}" id="app-name">Budget Tracker</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'add_income' %}">Add Income</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'add_expense' %}">Add Expense</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{% url 'add_emi' %}">Add EMI</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'view_incomes' %}">View Income</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'view_expenses' %}">View Expense</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-<div class="container mt-4">
-    <h2>Add EMI</h2>
-    <form method="POST" class="mt-4">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_amount">Amount</label>
-            {{ form.amount }}
-        </div>
-        <div class="form-group">
-            <label for="id_category">Category</label>
-            {{ form.category }}
-        </div>
-        <div class="form-group">
-            <label for="id_due_date">Due Date</label>
-            <input type="date" name="due_date" id="id_due_date" class="form-control" min="2020-01-01" max="2030-12-31" value="{{ form.due_date.value|default:'' }}">
-        </div>
-        <div class="form-group">
-            <label for="id_frequency">Frequency</label>
-            {{ form.frequency }}
-        </div>
-        <div class="form-group">
-            <label for="id_description">Description</label>
-            {{ form.description }}
-        </div>
-        <button type="submit" class="btn btn-primary">Add EMI</button>
+  <!-- Back Button -->
+  <div class="container mt-3">
+    <a href="{% url 'home' %}" class="btn btn-light text-dark font-weight-bold" style="background-color: #d1ecf1;">
+      <i class="bi bi-arrow-left-circle"></i> Back
+    </a>
+  </div>
+
+  <!-- Add EMI Form -->
+  <div class="add-emi-container">
+    <h2 class="add-emi-title">Add EMI</h2>
+    <form id="emi-form" class="emi-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="id_amount" class="form-label">Amount:</label>
+        <input type="number" class="form-control" id="id_amount" name="amount" required>
+      </div>
+      <div class="form-group">
+        <label for="id_start_date" class="form-label">Start Date:</label>
+        <input type="date" class="form-control" id="id_start_date" name="start_date" required>
+      </div>
+      <div class="form-group">
+        <label for="id_due_date" class="form-label">Due Date:</label>
+        <input type="date" class="form-control" id="id_due_date" name="due_date" required>
+      </div>
+      <div class="form-group">
+        <label for="id_frequency" class="form-label">Frequency:</label>
+        <select name="frequency" id="id_frequency" class="form-control">
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="bi-weekly">Bi-Weekly</option>
+          <option value="monthly" selected>Monthly</option>
+          <option value="quarterly">Quarterly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="id_remaining_installments" class="form-label">Number of Installments:</label>
+        <input type="number" class="form-control" id="id_remaining_installments" name="remaining_installments" readonly>
+      </div>
+      <div class="form-group">
+        <label for="id_description" class="form-label">Description:</label>
+        <textarea class="form-control" id="id_description" name="description"></textarea>
+      </div>
+      <div class="form-group mt-3">
+        <button type="submit" class="btn btn-success btn-block">Add EMI</button>
+      </div>
     </form>
-</div>
+  </div>
 
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
+  <!-- Include Bootstrap and custom JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
     document.addEventListener("DOMContentLoaded", function () {
-        flatpickr("#id_due_date", {
-            minDate: "2020-01-01",
-            maxDate: "2030-12-31",
-            dateFormat: "Y-m-d"
-        });
+      const emiForm = document.getElementById("emi-form");
+      const frequencyField = document.getElementById("id_frequency");
+      const installmentsField = document.getElementById("id_remaining_installments");
+
+      // Handle frequency change
+      frequencyField.addEventListener("change", function () {
+        const frequencies = {
+          daily: 30,
+          weekly: 4,
+          "bi-weekly": 2,
+          monthly: 12,
+          quarterly: 4,
+          yearly: 1,
+        };
+        installmentsField.value = frequencies[frequencyField.value] || 0;
+      });
+
+      frequencyField.dispatchEvent(new Event("change")); // Set initial value
+
+      // Handle form submission
+      emiForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+        const formData = new FormData(emiForm);
+        const submitButton = emiForm.querySelector("button[type='submit']");
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Submitting...";
+
+        fetch("{% url 'add_emi' %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrfToken,
+          },
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert("EMI added successfully!");
+              window.location.href = "{% url 'home' %}";
+            } else {
+              alert(data.message || "Failed to add EMI.");
+            }
+          })
+          .catch(() => alert("An error occurred while adding EMI."))
+          .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = "Add EMI";
+          });
+      });
     });
-</script>
-{% endblock %}
+  </script>
+</body>
+</html>

@@ -1,108 +1,300 @@
-{% extends "tracker/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <!-- Add Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 
-<div class="container mt-4">
-    <h2>Dashboard</h2>
+<body>
+    <!-- Custom Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top py-3" id="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="#" id="app-name">Budget Tracker</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'add_income' %}"><i class="fas fa-plus-circle"></i> Add Income</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_incomes' %}"><i class="fas fa-eye"></i> View Income</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'add_expense' %}"><i class="fas fa-minus-circle"></i> Add Expense</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_expenses' %}"><i class="fas fa-eye"></i> View Expenses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'add_emi' %}"><i class="fas fa-calendar-check"></i> Add EMI</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <div class="summary my-4">
-        <h3>Your Financial Overview</h3>
-        <p><strong>Total Income:</strong> ${{ total_income }}</p>
-        <p><strong>Total Expenses:</strong> ${{ total_expenses }}</p>
-        <p><strong>Balance:</strong> ${{ balance }}</p>
+    <!-- Financial Summary -->
+    <div class="summary-container container my-5">
+        <div class="summary-item card shadow-lg p-4 income-card">
+            <h4>Total Income</h4>
+            <p class="amount">${{ total_income }}</p>
+        </div>
+        <div class="summary-item card shadow-lg p-4 expense-card">
+            <h4>Total Expenses</h4>
+            <p class="amount">${{ total_expenses }}</p>
+        </div>
+        <div class="summary-item card shadow-lg p-4 emi-card">
+            <h4>Balance</h4>
+            <p class="amount">${{ balance }}</p>
+        </div>
     </div>
 
-    <div class="my-4">
-        <a href="{% url 'add_income' %}" class="btn btn-primary">Add Income</a>
-        <a href="{% url 'view_incomes' %}" class="btn btn-secondary">View Income</a>
-        <a href="{% url 'add_expense' %}" class="btn btn-danger">Add Expense</a>
-        <a href="{% url 'view_expenses' %}" class="btn btn-warning">View Expenses</a>
-        <a href="{% url 'add_emi' %}" class="btn btn-info">Add EMI</a> 
+    <!-- Recent Transactions (Income, Expenses, EMI) -->
+    <div class="container my-5">
+        <h3>Recent Transactions</h3>
+
+        <!-- Income Table -->
+        <div class="table-responsive">
+            <h5>Recent Income</h5>
+            <table class="table table-striped table-bordered table-hover shadow-lg rounded income-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for income in incomes %}
+                        <tr>
+                            <td>{{ income.date }}</td>
+                            <td>${{ income.amount }}</td>
+                            <td>{{ income.category__name }}</td>  <!-- Display category name -->
+                            <td>{{ income.description }}</td>  <!-- Display description -->
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No income recorded yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Expense Table -->
+        <div class="table-responsive">
+            <h5>Recent Expenses</h5>
+            <table class="table table-striped table-bordered table-hover shadow-lg rounded expense-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                        <tr>
+                            <td>{{ expense.date }}</td>
+                            <td>${{ expense.amount }}</td>
+                            <td>{{ expense.category__name }}</td>  <!-- Display category name -->
+                            <td>{{ expense.description }}</td>  <!-- Display description -->
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No expenses recorded yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- EMI Table -->
+        <div class="table-responsive">
+            <h5>Recent EMIs</h5>
+            <table class="table table-striped table-bordered table-hover shadow-lg rounded emi-table">
+                <thead>
+                    <tr>
+                        <th>Start Date</th>
+                        <th>Next Payment Date</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emi in emis %}
+                        <tr>
+                            <td>{{ emi.start_date|date:"F j, Y" }}</td>  <!-- Display start date -->
+                            <td>{{ emi.next_payment_date|date:"F j, Y" }}</td>  <!-- Display next payment date -->
+                            <td>${{ emi.amount }}</td>
+                            <td>{{ emi.description }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No EMI records yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+            <!-- Graphs -->
+    <div class="container my-5">
+        <h3>Financial Overview</h3>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 my-3">
+                <canvas id="incomeChart"></canvas>
+            </div>
+            <div class="col-lg-4 col-md-6 my-3">
+                <canvas id="expenseChart"></canvas>
+            </div>
+            <div class="col-lg-4 col-md-6 my-3">
+                <canvas id="emiChart"></canvas>
+            </div>
+        </div>
     </div>
 
-    <div class="my-4">
-        <h3>Recent Income</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for income in incomes %}
-                    <tr>
-                        <td>{{ income.date }}</td>
-                        <td>${{ income.amount }}</td>
-                        <td>{{ income.category }}</td>
-                        <td>{{ income.description }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="4">No income recorded yet.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 
-    <div class="my-4">
-        <h3>Recent Expenses</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for expense in expenses %}
-                    <tr>
-                        <td>{{ expense.date }}</td>
-                        <td>${{ expense.amount }}</td>
-                        <td>{{ expense.category }}</td>
-                        <td>{{ expense.description }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="4">No expenses recorded yet.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <div class="my-4">
-        <h3>Recent EMIs</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Due Date</th>
-                    <th>Amount</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for emi in emis %}
-                    <tr>
-                        <td>{{ emi.due_date }}</td>
-                        <td>${{ emi.amount }}</td>
-                        <td>{{ emi.category }}</td>
-                        <td>{{ emi.description }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="4">No EMI recorded yet.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+    <script>
+        // Utility function to safely parse JSON data
+        function parseJSONData(elementId) {
+            try {
+                const element = document.getElementById(elementId);
+                return element ? JSON.parse(element.textContent) : [];
+            } catch (error) {
+                console.error(`Error parsing JSON data from ${elementId}:`, error);
+                return [];
+            }
+        }
 
-{% endblock %}
+        // Income Data
+        var incomeData = parseJSONData('incomes');
+        var incomeAmounts = incomeData.map(item => item.amount);
+        var incomeLabels = incomeData.map(item => item.date);
+
+        // Expense Data
+        var expenseData = parseJSONData('expenses');
+        var expenseAmounts = expenseData.map(item => item.amount);
+        var expenseLabels = expenseData.map(item => item.date);
+
+        // EMI Data
+        var emiData = parseJSONData('emis');
+        var emiAmounts = emiData.map(item => item.amount);
+        var emiLabels = emiData.map(item => item.due_date);
+
+        // Income Chart
+        if (incomeLabels.length > 0 && incomeAmounts.length > 0) {
+            var ctxIncome = document.getElementById('incomeChart').getContext('2d');
+            var incomeChart = new Chart(ctxIncome, {
+                type: 'bar',
+                data: {
+                    labels: incomeLabels,
+                    datasets: [{
+                        label: 'Income',
+                        data: incomeAmounts,
+                        backgroundColor: '#28a745',
+                        borderColor: '#218838',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Expense Chart
+        if (expenseLabels.length > 0 && expenseAmounts.length > 0) {
+            var ctxExpense = document.getElementById('expenseChart').getContext('2d');
+            var expenseChart = new Chart(ctxExpense, {
+                type: 'bar',
+                data: {
+                    labels: expenseLabels,
+                    datasets: [{
+                        label: 'Expenses',
+                        data: expenseAmounts,
+                        backgroundColor: '#dc3545',
+                        borderColor: '#c82333',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // EMI Chart
+        if (emiLabels.length > 0 && emiAmounts.length > 0) {
+            var ctxEmi = document.getElementById('emiChart').getContext('2d');
+            var emiChart = new Chart(ctxEmi, {
+                type: 'line',
+                data: {
+                    labels: emiLabels,
+                    datasets: [{
+                        label: 'EMI',
+                        data: emiAmounts,
+                        backgroundColor: '#007bff',
+                        borderColor: '#0056b3',
+                        fill: false,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

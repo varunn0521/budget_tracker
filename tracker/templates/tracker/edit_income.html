@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Income</title>
+    <title>Edit Income</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/add_income.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/edit_income.css' %}?v=1">
 
     <!-- Include Bootstrap for modal and navbar styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body id="add-income-page">
+<body id="edit-income-page">
 
   <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
@@ -50,48 +50,46 @@
     </a>
   </div>
 
-  <!-- Add Income Form -->
-  <div class="add-income-container">
-    
-    <h2 class="add-income-title">Add Income</h2>
-    {% csrf_token %}
-
-    <form method="POST" action="{% url 'add_income' %}" class="income-form" autocomplete="off">
+  <!-- Edit Income Form -->
+  <div class="edit-income-container">
+    <h2 class="edit-income-title">Edit Income</h2>
+    <form method="POST" action="{% url 'edit_income' income.id %}" class="income-form" autocomplete="off">
       {% csrf_token %}
-      
+
       <!-- Amount Section -->
       <div class="form-group">
-          <label for="id_amount" class="form-label">Amount:</label>
-          <input type="number" class="form-control" id="id_amount" name="amount" required autocomplete="off">
+        <label for="id_amount" class="form-label">Amount:</label>
+        <input type="number" class="form-control" id="id_amount" name="amount" value="{{ income.amount }}" required>
       </div>
   
       <!-- Category Section -->
       <div class="form-group">
-          <label for="id_category" class="form-label">Category:</label>
-          <select name="category" id="id_category" class="form-control" autocomplete="off">
-              {% for category in categories %}
-                  <option value="{{ category.id }}">{{ category.name }}</option>
-              {% endfor %}
-          </select>
+        <label for="id_category" class="form-label">Category:</label>
+        <select name="category" id="id_category" class="form-control">
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if income.category.id == category.id %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
       </div>
   
       <!-- Custom Category Button -->
       <div class="form-group d-flex align-items-center">
-          <button type="button" class="btn btn-outline-primary btn-sm" id="add-category-btn">Add Your Category</button>
+        <button type="button" class="btn btn-outline-primary btn-sm" id="add-category-btn">Add Your Category</button>
       </div>
   
       <!-- Description Section -->
       <div class="form-group">
-          <label for="id_description" class="form-label">Description:</label>
-          <textarea class="form-control" id="id_description" name="description" autocomplete="off"></textarea>
+        <label for="id_description" class="form-label">Description:</label>
+        <textarea class="form-control" id="id_description" name="description">{{ income.description }}</textarea>
       </div>
   
       <!-- Submit Button -->
       <div class="form-group mt-3">
-          <button type="submit" class="btn btn-success btn-block">Add Income</button>
+        <button type="submit" class="btn btn-success btn-block">Update Income</button>
       </div>
-  </form>
-  
+    </form>
 
     <!-- Modal for adding custom category -->
     <div class="modal" tabindex="-1" id="addCategoryModal">
@@ -120,13 +118,11 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Custom JavaScript -->
-  <script src="{% static 'tracker/js/add_income.js' %}"></script>
+  <script src="{% static 'tracker/js/edit_income.js' %}"></script>
 
   <script>
-    const addIncomeUrl = "{% url 'add_income' %}";
     const addCategoryUrl = "{% url 'add_category' %}";
-    var dashboardUrl = "{% url 'dashboard' %}";
-
+    const dashboardUrl = "{% url 'dashboard' %}";
 
     // Show modal to add new category
     document.getElementById('add-category-btn').addEventListener('click', function() {
@@ -151,19 +147,17 @@
                 'Content-Type': 'application/json',
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
             },
-            body: JSON.stringify({ name: categoryName })
+            body: JSON.stringify({ name: categoryName, type: 'income' })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 alert('Category added successfully');
-                // Optionally, update the categories dropdown dynamically
                 const categoryDropdown = document.getElementById('id_category');
                 const newOption = document.createElement('option');
                 newOption.value = data.category_id;
                 newOption.textContent = categoryName;
                 categoryDropdown.appendChild(newOption);
-                // Close the modal
                 const myModal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
                 myModal.hide();
             } else {

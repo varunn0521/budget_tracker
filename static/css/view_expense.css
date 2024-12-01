@@ -1,0 +1,205 @@
+/* Main View Expense Page Styles */
+body {
+    background-color: #ffe6e6;
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+#navbar {
+    background-color: #dc3545;  /* Red background */
+    border-bottom: 3px solid #007bff;  /* Blue bottom border */
+    padding: 10px 0;
+    transition: background-color 0.4s ease, box-shadow 0.3s ease;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+#navbar:hover {
+    background-color: #a71d2a; /* Slightly darker on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-nav .nav-item {
+    margin: 0 15px;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 500;
+    padding: 12px 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: #007bff; /* Blue background on hover */
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.5);
+    transform: translateY(-2px);
+}
+
+/* App Name Customization */
+#app-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#app-name:hover {
+    color: orange;
+    transform: scale(1.1);
+}
+
+/* View Expense Table Container */
+#view-expense-page .view-expense-container {
+    background-color: #ffffff;
+    margin: 40px auto;
+    padding: 30px;
+    max-width: 800px;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Title */
+#view-expense-page .view-expense-title {
+    font-size: 2rem !important;
+    font-weight: bold !important;
+    color: #dc3545 !important; /* Red title */
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* Table Styling */
+#view-expense-page .table {
+    font-size: 1.1rem;
+    color: #333;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/* Table Headers */
+#view-expense-page .table th {
+    background-color: #dc3545; /* Red background */
+    color: #fd7e14;  /* Orange text */
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+    border: 2px solid #dc3545;  /* Darker red border */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Table Rows */
+#view-expense-page .table td {
+    background-color: #f8f9fa;
+    padding: 12px;
+    border: 1px solid #ddd; /* Light grey border for rows */
+}
+
+#view-expense-page .table-hover tbody tr:hover {
+    background-color: #ffe1e1; /* Light red hover effect */
+}
+
+/* Edit and Delete Buttons */
+#view-expense-page .btn {
+    font-size: 1rem;
+    padding: 8px 15px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+#view-expense-page .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: white;
+}
+
+#view-expense-page .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+#view-expense-page .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+#view-expense-page .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Modal Styling */
+#view-expense-page .modal-content {
+    border-radius: 8px !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+#view-expense-page .modal-header {
+    background-color: #dc3545 !important;
+    color: white !important;
+    text-align: center !important;
+}
+
+#view-expense-page .modal-title {
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+}
+
+/* Back Button */
+#back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.5rem;
+    color: #dc3545;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#back-button:hover {
+    color: #007bff;
+    transform: scale(1.1);
+}
+
+/* Mobile View Navbar Enhancements */
+@media (max-width: 767px) {
+    #navbar {
+        background-color: #dc3545;
+        border-bottom: none;
+    }
+
+    .navbar-nav {
+        text-align: center;
+        padding: 15px;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 10px 0;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 1.4rem;
+        padding: 10px 20px;
+    }
+}
+
+/* Animation for smooth page load */
+@keyframes fadeIn {
+    0% {
+        opacity: 0 !important;
+    }
+    100% {
+        opacity: 1 !important;
+    }
+}

@@ -1,0 +1,193 @@
+/* Main View Income Page Styles */
+body {
+    background-color: #f0f8ff;
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+#navbar {
+    background-color: #007bff;  /* Blue background */
+    border-bottom: 3px solid #dc3545;  /* Red bottom border */
+    padding: 10px 0;
+    transition: background-color 0.4s ease, box-shadow 0.3s ease;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+#navbar:hover {
+    background-color: #0056b3; /* Slightly darker on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-nav .nav-item {
+    margin: 0 15px; /* Add spacing between navbar items */
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 500;
+    padding: 12px 20px; /* Increased padding for better spacing */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: #dc3545; /* Red background on hover */
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5); /* Add shadow on hover */
+    transform: translateY(-2px); /* Slight upwards movement */
+}
+
+/* App Name Customization */
+#app-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#app-name:hover {
+    color: orange; /* Change color to orange on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
+/* View Income Table Container */
+#view-income-page .view-income-container {
+    background-color: #ffffff;
+    margin: 40px auto;
+    padding: 30px;
+    max-width: 800px;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Title */
+#view-income-page .view-income-title {
+    font-size: 2rem !important;
+    font-weight: bold !important;
+    color: #007bff !important; /* Blue title */
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* Table Styling */
+#view-income-page .table {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+#view-income-page .table th {
+    background-color: #007bff;
+    color: white;
+}
+
+#view-income-page .table td {
+    background-color: #f8f9fa;
+}
+
+#view-income-page .table-hover tbody tr:hover {
+    background-color: #e1f1ff;
+}
+
+/* Edit and Delete Buttons */
+#view-income-page .btn {
+    font-size: 1rem;
+    padding: 8px 15px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+#view-income-page .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: white;
+}
+
+#view-income-page .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+#view-income-page .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+#view-income-page .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+/* Modal Styling */
+#view-income-page .modal-content {
+    border-radius: 8px !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+#view-income-page .modal-header {
+    background-color: #007bff !important;
+    color: white !important;
+    text-align: center !important;
+}
+
+#view-income-page .modal-title {
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+}
+
+/* Back Button */
+#back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.5rem;
+    color: #007bff;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#back-button:hover {
+    color: #dc3545;
+    transform: scale(1.1);
+}
+
+/* Mobile View Navbar Enhancements */
+@media (max-width: 767px) {
+    #navbar {
+        background-color: #007bff;
+        border-bottom: none;
+    }
+
+    .navbar-nav {
+        text-align: center;
+        padding: 15px;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 10px 0; /* More spacing on mobile */
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 1.4rem; /* Slightly larger text on mobile */
+        padding: 10px 20px;
+    }
+}
+
+/* Animation for smooth page load */
+@keyframes fadeIn {
+    0% {
+        opacity: 0 !important;
+    }
+    100% {
+        opacity: 1 !important;
+    }
+}

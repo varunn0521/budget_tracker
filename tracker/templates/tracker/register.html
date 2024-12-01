@@ -1,163 +1,191 @@
-{% extends 'tracker/base.html' %}
-{% load custom_filters %}
-{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    {% load static %}
+    {% load custom_filters %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Register | Budget Tracker</title>
+</head>
 
-{% if messages %}
-    <div class="alert alert-success" id="success-message" style="display:none;">
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    </div>
-{% endif %}
-
-<div class="container mt-4">
-    <h2>Register</h2>
-    <form method="POST" action="">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="{{ form.email.id_for_label }}">
-                <i class="fas fa-envelope"></i> Email
-            </label>
-            {{ form.email|add_class:"form-control" }}
-            {% if form.email.errors %}
-                <div class="invalid-feedback">
-                    {% for error in form.email.errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.password1.id_for_label }}">
-                <i class="fas fa-lock"></i> Password
-            </label>
-            {{ form.password1|add_class:"form-control" }}
-            {% if form.password1.errors %}
-            <div id="password-feedback" class="invalid-feedback" style="display:none;">
-            </div>
-            {% endif %}
-            
-            <div class="password-rules" id="password-rules" style="display:none;">
-                <i class="fas fa-question-circle"></i> 
-                <ul>
-                    <li id="min-length-rule" class="invalid-rule">At least 8 characters</li>
-                    <li id="uppercase-rule" class="invalid-rule">At least one uppercase letter</li>
-                    <li id="special-char-rule" class="invalid-rule">At least one special character</li>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <i class="fas fa-wallet"></i> Budget Tracker
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link logout-link" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link login-link" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link register-link" href="{% url 'register' %}">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
+    </nav>
 
-        <div class="form-group">
-            <label for="{{ form.password2.id_for_label }}">
-                <i class="fas fa-lock"></i> Confirm Password
-            </label>
-            {{ form.password2|add_class:"form-control" }}
-            {% if form.password2.errors %}
-                <div class="invalid-feedback">
-                    {% for error in form.password2.errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-            <div id="password-match-feedback" class="invalid-feedback" style="display:none;">
-                Passwords do not match
-            </div>
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container text-center">
+            <h1 class="hero-title">
+                <i class="fas fa-user-plus"></i> Join Budget Tracker Today
+            </h1>
+            <p class="hero-subtitle">Sign up and start managing your finances effectively.</p>
         </div>
+    </header>
 
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-user-plus"></i> Register
-        </button>
-    </form>
-    
-    <p class="mt-3">Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
-</div>
+    <!-- Main Content -->
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Register</h2>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                {{ form.email|add_class:"form-control" }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">
+                    <i class="fas fa-lock"></i> Password
+                </label>
+                {{ form.password1|add_class:"form-control" }}
+                <ul class="password-rule-list">
+                    <li class="invalid" id="uppercase-rule"><span class="rule-icon">✘</span> At least one uppercase letter</li>
+                    <li class="invalid" id="number-rule"><span class="rule-icon">✘</span> At least one number</li>
+                    <li class="invalid" id="symbol-rule"><span class="rule-icon">✘</span> At least one special symbol</li>
+                    <li class="invalid" id="length-rule"><span class="rule-icon">✘</span> At least 8 characters long</li>
+                </ul>
+            </div>
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">
+                    <i class="fas fa-lock"></i> Confirm Password
+                </label>
+                {{ form.password2|add_class:"form-control" }}
+                <small id="password-match-error" class="text-danger" style="display: none;">Passwords do not match.</small>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mt-3">
+                <i class="fas fa-user-plus"></i> Register
+            </button>
+        </form>
+        <p class="mt-3">Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
+    </div>
 
-{% endblock %}
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p><i class="fas fa-copyright"></i> 2024 Budget Tracker. All rights reserved.</p>
+        </div>
+    </footer>
 
-{% block extra_js %}
-<script src="{% static 'js/registration.js' %}"></script>
-<script>
-    $(document).ready(function () {
-        $('#id_password1').focus(function () {
-            $('#password-rules').fadeIn();
-        });
+    <!-- Success Alert -->
+    <div class="alert-success" id="registration-success" style="display: none;">
+        Registration successful! Welcome to Budget Tracker.
+    </div>
 
-        $('#id_password1').blur(function () {
-            if ($('#id_password1').val() == '') {
-                $('#password-rules').fadeOut();
-            }
-        });
+    <script>
+        // Password validation
+        function validatePassword() {
+            const password = document.querySelector('input[name="password1"]').value;
+            const confirmPassword = document.querySelector('input[name="password2"]').value;
 
-        $('#id_password1').keyup(function () {
-            var password = $('#id_password1').val();
-            var minLength = password.length >= 8;
-            var hasUppercase = /[A-Z]/.test(password);
-            var hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            const upperCasePattern = /[A-Z]/;
+            const numberPattern = /\d/;
+            const symbolPattern = /[!@#$%^&*(),.?":{}|<>]/;
+            const isUpperCase = upperCasePattern.test(password);
+            const isNumber = numberPattern.test(password);
+            const isSymbol = symbolPattern.test(password);
+            const isValidLength = password.length >= 8;
 
-            if (minLength) {
-                $('#min-length-rule').removeClass('invalid-rule').addClass('valid-rule');
+            // Update password rule UI
+            toggleRule('uppercase-rule', isUpperCase);
+            toggleRule('number-rule', isNumber);
+            toggleRule('symbol-rule', isSymbol);
+            toggleRule('length-rule', isValidLength);
+
+            // Check if passwords match
+            const matchError = document.getElementById('password-match-error');
+            if (password === confirmPassword) {
+                matchError.style.display = 'none';
             } else {
-                $('#min-length-rule').removeClass('valid-rule').addClass('invalid-rule');
+                matchError.style.display = 'block';
             }
 
-            if (hasUppercase) {
-                $('#uppercase-rule').removeClass('invalid-rule').addClass('valid-rule');
+            // Show success message if all rules are met and passwords match
+            const successAlert = document.getElementById('registration-success');
+            if (isUpperCase && isNumber && isSymbol && isValidLength && password === confirmPassword) {
+                successAlert.style.display = 'block';
             } else {
-                $('#uppercase-rule').removeClass('valid-rule').addClass('invalid-rule');
+                successAlert.style.display = 'none';
             }
+        }
 
-            if (hasSpecialChar) {
-                $('#special-char-rule').removeClass('invalid-rule').addClass('valid-rule');
+        // Function to toggle rule validity and update icon
+        function toggleRule(ruleId, isValid) {
+            const ruleElement = document.getElementById(ruleId);
+            const iconElement = ruleElement.querySelector('.rule-icon');
+
+            // Change the icon and color based on validity
+            if (isValid) {
+                ruleElement.classList.remove('invalid');
+                ruleElement.classList.add('valid');
+                iconElement.textContent = '✓';  // Green checkmark
             } else {
-                $('#special-char-rule').removeClass('valid-rule').addClass('invalid-rule');
+                ruleElement.classList.remove('valid');
+                ruleElement.classList.add('invalid');
+                iconElement.textContent = '✘';  // Red cross
+            }
+        }
+
+        // Validate password on input
+        document.querySelector('input[name="password1"]').addEventListener('input', validatePassword);
+        document.querySelector('input[name="password2"]').addEventListener('input', validatePassword);
+
+        // Form submit to check validation before submitting
+        document.querySelector("form").addEventListener("submit", function (e) {
+            const password = document.querySelector('input[name="password1"]').value;
+            const confirmPassword = document.querySelector('input[name="password2"]').value;
+
+            const upperCasePattern = /[A-Z]/;
+            const numberPattern = /\d/;
+            const symbolPattern = /[!@#$%^&*(),.?":{}|<>]/;
+            const isUpperCase = upperCasePattern.test(password);
+            const isNumber = numberPattern.test(password);
+            const isSymbol = symbolPattern.test(password);
+            const isValidLength = password.length >= 8;
+
+            if (!(isUpperCase && isNumber && isSymbol && isValidLength && password === confirmPassword)) {
+                e.preventDefault();  // Prevent form submission if validation fails
+                return false;
             }
         });
+    </script>
+</body>
 
-        $('#id_password2').keyup(function () {
-            if ($('#id_password1').val() !== $('#id_password2').val()) {
-                $('#password-match-feedback').fadeIn();
-            } else {
-                $('#password-match-feedback').fadeOut();
-            }
-        });
-    });
-</script>
-{% endblock %}
-
-{% block extra_style %}
-<style>
-
-.password-container {
-    margin-bottom: 20px;
-}
-
-.password-container input {
-    margin-bottom: 10px;
-}
-
-.password-rules {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    display: none;
-}
-
-.valid-rule {
-    color: green;
-}
-
-.invalid-rule {
-    color: red;
-}
-
-#password-feedback, #password-match-feedback {
-    display: block;
-    color: red;
-}
-</style>
-{% endblock %}
+</html>

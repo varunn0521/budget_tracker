@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Income</title>
+    <title>Edit Expense</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/add_income.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/edit_expense.css' %}?v=1">
 
     <!-- Include Bootstrap for modal and navbar styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body id="add-income-page">
+<body id="edit-expense-page">
 
   <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
@@ -21,77 +21,64 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'dashboard' %}">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_income' %}">Add Income</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_expense' %}">Add Expense</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_emi' %}">Add EMI</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'view_incomes' %}">View Income</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'view_expenses' %}">View Expense</a>
-          </li>
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'dashboard' %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'add_income' %}">Add Income</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'add_expense' %}">Add Expense</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'add_emi' %}">Add EMI</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'view_incomes' %}">View Income</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'view_expenses' %}">View Expense</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
   <div class="container mt-3">
-    <a href="{% url 'dashboard' %}" class="btn btn-light text-dark font-weight-bold" style="background-color: #d1ecf1;">
+    <a href="{% url 'dashboard' %}" class="btn btn-light text-dark font-weight-bold" style="background-color: #f8d7da;">
       <i class="bi bi-arrow-left-circle"></i> Back
     </a>
   </div>
 
-  <!-- Add Income Form -->
-  <div class="add-income-container">
-    
-    <h2 class="add-income-title">Add Income</h2>
-    {% csrf_token %}
-
-    <form method="POST" action="{% url 'add_income' %}" class="income-form" autocomplete="off">
+  <!-- Edit Expense Form -->
+  <div class="edit-expense-container">
+    <h2 class="edit-expense-title">Edit Expense</h2>
+    <form method="POST" action="{% url 'edit_expense' expense.id %}" class="expense-form" autocomplete="off">
       {% csrf_token %}
-      
+
       <!-- Amount Section -->
       <div class="form-group">
-          <label for="id_amount" class="form-label">Amount:</label>
-          <input type="number" class="form-control" id="id_amount" name="amount" required autocomplete="off">
+        <label for="id_amount" class="form-label">Amount:</label>
+        <input type="number" class="form-control" id="id_amount" name="amount" value="{{ expense.amount }}" required>
       </div>
   
       <!-- Category Section -->
       <div class="form-group">
-          <label for="id_category" class="form-label">Category:</label>
-          <select name="category" id="id_category" class="form-control" autocomplete="off">
-              {% for category in categories %}
-                  <option value="{{ category.id }}">{{ category.name }}</option>
-              {% endfor %}
-          </select>
+        <label for="id_category" class="form-label">Category:</label>
+        <select name="category" id="id_category" class="form-control">
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if expense.category.id == category.id %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+          <option value="new">Add New Category</option>
+        </select>
       </div>
   
       <!-- Custom Category Button -->
       <div class="form-group d-flex align-items-center">
-          <button type="button" class="btn btn-outline-primary btn-sm" id="add-category-btn">Add Your Category</button>
+        <button type="button" class="btn btn-outline-primary btn-sm" id="add-category-btn">Add Your Category</button>
       </div>
   
       <!-- Description Section -->
       <div class="form-group">
-          <label for="id_description" class="form-label">Description:</label>
-          <textarea class="form-control" id="id_description" name="description" autocomplete="off"></textarea>
+        <label for="id_description" class="form-label">Description:</label>
+        <textarea class="form-control" id="id_description" name="description">{{ expense.description }}</textarea>
       </div>
   
       <!-- Submit Button -->
       <div class="form-group mt-3">
-          <button type="submit" class="btn btn-success btn-block">Add Income</button>
+        <button type="submit" class="btn btn-danger btn-block">Update Expense</button>
       </div>
-  </form>
-  
+    </form>
 
     <!-- Modal for adding custom category -->
     <div class="modal" tabindex="-1" id="addCategoryModal">
@@ -120,13 +107,11 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Custom JavaScript -->
-  <script src="{% static 'tracker/js/add_income.js' %}"></script>
+  <script src="{% static 'tracker/js/edit_expense.js' %}"></script>
 
   <script>
-    const addIncomeUrl = "{% url 'add_income' %}";
     const addCategoryUrl = "{% url 'add_category' %}";
-    var dashboardUrl = "{% url 'dashboard' %}";
-
+    const dashboardUrl = "{% url 'dashboard' %}";
 
     // Show modal to add new category
     document.getElementById('add-category-btn').addEventListener('click', function() {
@@ -151,23 +136,21 @@
                 'Content-Type': 'application/json',
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
             },
-            body: JSON.stringify({ name: categoryName })
+            body: JSON.stringify({ name: categoryName, type: 'expense' })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 alert('Category added successfully');
-                // Optionally, update the categories dropdown dynamically
                 const categoryDropdown = document.getElementById('id_category');
                 const newOption = document.createElement('option');
                 newOption.value = data.category_id;
                 newOption.textContent = categoryName;
                 categoryDropdown.appendChild(newOption);
-                // Close the modal
-                const myModal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
-                myModal.hide();
+                categoryDropdown.value = data.category_id;
+                bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
             } else {
-                alert('Failed to add category');
+                alert(data.message);
             }
         })
         .catch(error => {

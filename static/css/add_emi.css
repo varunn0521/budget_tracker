@@ -1,0 +1,231 @@
+/* Main Add EMI Page Styles */
+body {
+    background-color: #fff5e6; /* Light orange background */
+}
+
+/* Navbar Styling */
+#navbar {
+    background-color: #ff7f00;  /* Orange background */
+    border-bottom: 3px solid #007bff;  /* Blue bottom border */
+    padding: 10px 0;
+    transition: background-color 0.4s ease, box-shadow 0.3s ease;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+#navbar:hover {
+    background-color: #e66a00; /* Slightly darker orange on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-nav .nav-item {
+    margin: 0 15px; /* Add spacing between navbar items */
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 500;
+    padding: 12px 20px; /* Increased padding for better spacing */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: #007bff; /* Blue background on hover */
+    color: #fff !important;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5); /* Add shadow on hover */
+    transform: translateY(-2px); /* Slight upwards movement */
+}
+
+/* App Name Customization */
+#app-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#app-name:hover {
+    color: #007bff; /* Change color to blue on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
+/* Add EMI Form Container */
+#add-emi-page .add-emi-container {
+    background-color: #ffffff;
+    margin: 40px auto;
+    padding: 30px;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Title */
+#add-emi-page .add-emi-title {
+    font-size: 2rem !important;
+    font-weight: bold !important;
+    color: #ff7f00 !important; /* Orange title */
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* Form styling */
+#add-emi-page .add-emi-form .form-group {
+    margin-bottom: 20px !important;
+}
+
+#add-emi-page .form-group label {
+    font-weight: bold !important;
+    color: #333 !important;
+}
+
+#add-emi-page .form-control {
+    border-radius: 4px !important;
+    border: 1px solid #ff7f00 !important;
+    padding: 12px !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease-in-out !important;
+}
+
+#add-emi-page .form-control:focus {
+    border-color: #e66a00 !important;
+    box-shadow: 0 0 5px rgba(255, 127, 0, 0.5) !important;
+}
+
+/* Button Styling */
+#add-emi-page .btn-primary {
+    background-color: #ff7f00 !important;
+    border-color: #ff7f00 !important;
+    color: white !important;
+    font-weight: bold !important;
+    padding: 12px 20px !important;
+    width: 100% !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+#add-emi-page .btn-primary:hover {
+    background-color: #e66a00 !important;
+    border-color: #b35900 !important;
+}
+
+/* Custom Category Button */
+#add-emi-page #add-category-emi-btn {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+    width: 100% !important;
+    padding: 8px !important;
+    border-radius: 4px !important;
+    font-weight: bold !important;
+    transition: all 0.3s ease !important;
+}
+
+#add-emi-page #add-category-emi-btn:hover {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+}
+
+/* Modal Styling */
+#add-emi-page .modal-content {
+    border-radius: 8px !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+#add-emi-page .modal-header {
+    background-color: #ff7f00 !important;
+    color: white !important;
+    text-align: center !important;
+}
+
+#add-emi-page .modal-title {
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+}
+
+/* Animation for smooth page load */
+@keyframes fadeIn {
+    0% {
+        opacity: 0 !important;
+    }
+    100% {
+        opacity: 1 !important;
+    }
+}
+
+/* Back Button */
+#back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.5rem;
+    color: #ff7f00;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#back-button:hover {
+    color: #007bff;
+    transform: scale(1.1);
+}
+
+/* Mobile View Navbar Enhancements */
+@media (max-width: 767px) {
+    #navbar {
+        background-color: #ff7f00;
+        border-bottom: none;
+    }
+
+    .navbar-nav {
+        text-align: center;
+        padding: 15px;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 10px 0; /* More spacing on mobile */
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 1.4rem; /* Slightly larger text on mobile */
+        padding: 10px 20px;
+    }
+}
+
+/* Back Button Styling */
+#back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    color: #ff7f00; /* Orange color for EMI page */
+    text-decoration: none;
+    background: transparent;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ff7f00;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+#back-button:hover {
+    color: #fff;
+    background-color: #ff7f00;
+    transform: scale(1.1);
+}
+
+#back-button:active {
+    transform: scale(0.98);
+}
+
+#back-button::before {
+    content: "←";
+    margin-right: 8px;
+}

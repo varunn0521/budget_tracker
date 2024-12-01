@@ -1,33 +1,199 @@
-{% extends "tracker/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Income</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/view_income.css' %}?v=1">
 
-{% block content %}
-<button class="btn btn-secondary mb-3" onclick="history.back()">Back</button>
+    <!-- Include Bootstrap for modal and navbar styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body id="view-income-page">
 
-<div class="container mt-4">
+  <nav id="navbar" class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'dashboard' %}" id="app-name">Budget Tracker</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'add_income' %}">Add Income</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'add_expense' %}">Add Expense</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'add_emi' %}">Add EMI</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{% url 'view_incomes' %}">View Income</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'view_expenses' %}">View Expense</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-3">
+    <a href="{% url 'dashboard' %}" class="btn btn-light text-dark font-weight-bold" style="background-color: #d1ecf1;">
+      <i class="bi bi-arrow-left-circle"></i> Back
+    </a>
+  </div>
+
+  <!-- View Income Table -->
+  <div class="container mt-4">
     <h2>Your Incomes</h2>
     <table class="table table-striped">
-        <thead>
-            <tr>
-                <th style="color: #3498db;">Date</th>
-                <th style="color: #e74c3c;">Amount</th>
-                <th style="color: #2ecc71;">Category</th>
-                <th style="color: #9b59b6;">Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for income in incomes %}
-                <tr>
-                    <td>{{ income.date }}</td>
-                    <td>{{ income.amount }}</td>
-                    <td>{{ income.category.name }}</td>
-                    <td>{{ income.description }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center">No incomes recorded.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
+      <thead>
+        <tr>
+          <th style="color: #3498db;">Date</th>
+          <th style="color: #e74c3c;">Amount</th>
+          <th style="color: #2ecc71;">Category</th>
+          <th style="color: #9b59b6;">Description</th>
+          <th style="color: #f39c12;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for income in incomes %}
+          <tr>
+            <td>{{ income.date }}</td>
+            <td>{{ income.amount }}</td>
+            <td>{{ income.category.name }}</td>
+            <td>{{ income.description }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" onclick="editIncome({{ income.id }})">
+                <i class="bi bi-pencil-square"></i> Edit
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="deleteIncome({{ income.id }})">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="text-center">No incomes recorded.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
-</div>
-{% endblock %}
+  </div>
+
+  <!-- Modal for Editing Income -->
+  <div class="modal" tabindex="-1" id="editIncomeModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Income</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="edit-income-form" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="edit-amount">Amount:</label>
+              <input type="number" class="form-control" id="edit-amount" name="amount" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-category">Category:</label>
+              <select class="form-control" id="edit-category" name="category" required>
+                {% for category in categories %}
+                  <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="edit-description">Description:</label>
+              <textarea class="form-control" id="edit-description" name="description"></textarea>
+            </div>
+            <input type="hidden" id="edit-income-id">
+            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom JavaScript -->
+  <script>
+    // Base URL for the 'Edit Income' functionality
+    const editIncomeBaseUrl = "{% url 'edit_income' income_id=0 %}".replace('/0/', '/');
+
+    function editIncome(incomeId) {
+      const editUrl = `${editIncomeBaseUrl}${incomeId}/`;
+      fetch(editUrl)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById('edit-income-id').value = incomeId;
+            document.getElementById('edit-amount').value = data.income.amount;
+            document.getElementById('edit-category').value = data.income.category.id;
+            document.getElementById('edit-description').value = data.income.description;
+    
+            const myModal = new bootstrap.Modal(document.getElementById('editIncomeModal'));
+            myModal.show();
+          }
+        })
+        .catch(error => {
+          alert('Error fetching income data: ' + error);
+        });
+    }
+
+    document.getElementById('edit-income-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const incomeId = document.getElementById('edit-income-id').value;
+      const amount = document.getElementById('edit-amount').value;
+      const category = document.getElementById('edit-category').value;
+      const description = document.getElementById('edit-description').value;
+
+      fetch(editIncomeBaseUrl + incomeId + '/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ income_id: incomeId, amount, category, description })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Income updated successfully');
+          location.reload();
+        } else {
+          alert('Failed to update income');
+        }
+      })
+      .catch(error => {
+        alert('Error updating income: ' + error);
+      });
+    });
+
+    // Updated deleteIncome function
+    function deleteIncome(incomeId) {
+      if (confirm('Are you sure you want to delete this income?')) {
+        fetch("{% url 'delete_income' income_id=0 %}".replace('/0/', `/${incomeId}/`), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          },
+          body: JSON.stringify({ income_id: incomeId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Income deleted successfully');
+            location.reload();
+          } else {
+            alert('Failed to delete income');
+          }
+        })
+        .catch(error => {
+          alert('Error deleting income: ' + error);
+        });
+      }
+    }
+  </script>
+</body>
+</html>
